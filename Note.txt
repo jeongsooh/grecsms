@@ -1,0 +1,9 @@
+[2023-09-26 15:32:03,974: INFO/MainProcess] mingle: all alone
+[2023-09-26 15:32:10,139: INFO/MainProcess] celery@DESKTOP-ISVFPRU ready.
+[2023-09-26 15:32:10,140: WARNING/MainProcess] D:\Users\jeongsooh\projects\python\csms\venv\lib\site-packages\celery\worker\consumer\consumer.py:507: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2023-09-26 15:32:12,196: INFO/MainProcess] pidbox: Connected to redis://localhost:6379/1.
