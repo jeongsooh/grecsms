@@ -48,6 +48,7 @@
           <th scope="col">채널2상태</th>
           <th scope="col">커넥션2아이디</th>
           <th scope="col">승인된2카드테그</th>
+          <th scope="col">리셋</th>
           <th scope="col">삭제</th>
         </tr>
       </thead>
@@ -68,6 +69,8 @@
           <th>{{ clients.authorized_tag_2 }}</th>
           <th><a class="btn btn-primary btn-sm btn-warning" id="clients-{{ clients.id }}" 
             href="/clients/{{ clients.id }}/reset" target="_blank">리셋</a></th>
+          <th><a class="btn btn-primary btn-sm btn-danger" id="clients-{{ clients.id }}" 
+            href="/clients/{{ clients.id }}/delete" target="_blank">삭제</a></th>
         </tr>
         {% endfor %}
       </tbody>

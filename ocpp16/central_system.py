@@ -56,7 +56,7 @@ def ocpp_request(ocpp_req):
         else:
           status = "Accepted"
 
-        queryset = Variables.objects.filter(group="group0").values()
+        queryset = Variables.objects.filter(group="interval").values()
         if queryset.count() == 0:
           interval = 480
         else:
@@ -170,8 +170,8 @@ def ocpp_request(ocpp_req):
           userid = queryset[0]['userid'],
           energy = ocpp_req['msg_content']['meterStart'],
           amount = 0,
-          start_dttm = datetime.strptime(ocpp_req['msg_content']['timestamp'], '%Y-%m-%dT%H:%M:%SZ'),
-          end_dttm = datetime.strptime(ocpp_req['msg_content']['timestamp'], '%Y-%m-%dT%H:%M:%SZ'),
+          start_dttm = datetime.strptime(ocpp_req['msg_content']['timestamp'][:19]+'Z', '%Y-%m-%dT%H:%M:%SZ'),
+          end_dttm = datetime.strptime(ocpp_req['msg_content']['timestamp'][:19]+'Z', '%Y-%m-%dT%H:%M:%SZ'),
         )
         charginginfo.save()
 
@@ -193,7 +193,7 @@ def ocpp_request(ocpp_req):
         energy = ocpp_req['msg_content']['meterStop'] - charginginfo['energy']
         end_dttm = ocpp_req['msg_content']['timestamp']
         start_time = charginginfo['start_dttm']
-        start_dttm = datetime.strftime('%Y-%m-%dT%H:%M:%SZ')
+        start_dttm = start_time.strftime('%Y-%m-%dT%H:%M:%SZ')
 
         # amount = kepcoTariffs() # 한전 요금표에 따라서 계산하는 루틴
         energy_kw = energy / 1000
@@ -202,7 +202,7 @@ def ocpp_request(ocpp_req):
         print('energy: {}, amount: {}, end_dttm: {}'.format(energy, amount, end_dttm))
 
         # Charginginfo update
-        end_time = datetime.strptime(end_dttm, '%Y-%m-%dT%H:%M:%SZ')
+        end_time = datetime.strptime(end_dttm[:19] + 'Z', '%Y-%m-%dT%H:%M:%SZ')
         Charginginfo.objects.filter(id=charginginfo['id']).update(energy=energy, amount=amount, end_dttm=end_time)
 
         ocpp_conf = [3, ocpp_req['connection_id'],

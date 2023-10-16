@@ -26,7 +26,7 @@ util_rate = 0.1
 
 # Charging rate
 charging_rate = 200
-actual_min = 0
+# actual_min = 0
 
 # Kepco price table
 price_table = [
@@ -67,8 +67,8 @@ price_table = [
 def calculate_price(start_time, end_time, energy):
 
   # Convert the start and end times to datetime objects
-  start_datetime = datetime.strptime(start_time, '%Y-%m-%dT%H:%M:%SZ')
-  end_datetime = datetime.strptime(end_time, '%Y-%m-%dT%H:%M:%SZ')
+  start_datetime = datetime.strptime(start_time[:19]+'Z', '%Y-%m-%dT%H:%M:%SZ')
+  end_datetime = datetime.strptime(end_time[:19]+'Z', '%Y-%m-%dT%H:%M:%SZ')
 
   # Average energy for the duration
   total_hours = (end_datetime - start_datetime) / timedelta(hours=1)
@@ -86,6 +86,7 @@ def calculate_price(start_time, end_time, energy):
   # Calculate the total price for the given period
   total_price = 0
   start_end_flag = 0
+  actual_min = 0
   current_datetime = start_datetime
   while current_datetime < end_datetime:
     # Calculate the price for the current date and time
@@ -173,13 +174,13 @@ def calculate_price_for_date_and_time(date_obj, time_obj, start_end_flag, actual
 # 시간 정보
 # start_time = "2022-12-10T13:30:01.634615"
 # end_time = "2022-12-10T15:00:00.634615"
-# start_time = "2022-10-31T22:10:00Z"
-# end_time = "2022-11-01T02:10:00Z"
+start_time = "2022-10-31T22:10:00Z"
+end_time = "2022-10-31T22:25:00Z"
 # end_time = "2022-10-31T22:11:01Z"
-# energy = 0.11
+energy = 1.2
 
 # starttime_obj = datetime.fromisoformat(starttime)
 # endtime_obj = datetime.fromisoformat(endtime)
 
-# total_price, base_fee = calculate_price(start_time, end_time, energy)
-# print("기본요금 {:.2f} 이용요금 {:.2f} 포함 매출원가 {:.2f}".format(base_fee, total_price, base_fee + total_price))
+total_price, base_fee = calculate_price(start_time, end_time, energy)
+print("기본요금 {:.2f} 이용요금 {:.2f} 포함 매출원가 {:.2f}".format(base_fee, total_price, base_fee + total_price))
