@@ -5,11 +5,18 @@ from django.views.generic.edit import FormView
 from django.db.models import Q
 
 from .models import Clients
-from .forms import ClientsResetForm, ChargingProfileForm, CompositeScheduleForm, ClearChargingProfileForm, RemoteStartForm
+from .forms import (ClientsResetForm, ChargingProfileForm, CompositeScheduleForm, 
+      ClearChargingProfileForm, RemoteStartForm, RemoteStopForm, ClientsClearcacheForm,
+      ClientsUnlockConnForm, ClientsGetconfForm, ClientsSetconfForm, ClientsGetLocalListForm,
+      ClientsSendLocalListForm, ClientsUpdateFirmwareForm, ClientsGetDiagForm, ClientsReserveNowForm,
+      ClientsChangeAvailableForm, ClientsCancelReservationForm, ClientsTriggerMessageForm,
+      DataTransferForm)
 
 from ocpp16.client_gateway import ( reset_evcharger, update_evcharger, clearcache_evcharger, 
       remotestart_evcharger, remotestop_evcharger, unlock_connector, get_conf, set_conf,
-      set_charging_profile, clear_charging_profile, get_composite_schedule)
+      set_charging_profile, clear_charging_profile, get_composite_schedule, get_locallist,
+      send_locallist, update_firmware, get_diagnostics, reserve_now, change_available, cancel_reservation,
+      trigger_message, data_transfer)
 
 # Create your views here.
 
@@ -55,8 +62,8 @@ class ClientsDetail(DetailView):
     return context
 
 class ClientsClearcacheView(FormView):
-  template_name = 'clients_reset.html'
-  form_class = ClientsResetForm
+  template_name = 'clients_clearcache.html'
+  form_class = ClientsClearcacheForm
   success_url = '/clients'
 
   def form_valid(self, form):
@@ -66,68 +73,122 @@ class ClientsClearcacheView(FormView):
     return super().form_valid(form) 
 
 class RemoStartChargeView(FormView):
-  template_name = 'clients_reset.html'
+  template_name = 'clients_remostart.html'
   form_class = RemoteStartForm
   success_url = '/clients'
 
   def form_valid(self, form):
     cpnumber = form.data.get('cpnumber')
     id_tag = form.data.get('id_tag')
-    charging_profile = form.data.get('charging_profile')
+
+    charging_schedule_period = []
+    start_period1 = form.data.get('start_period1')
+    period_limit1 = form.data.get('period_limit1')
+    if  start_period1 and period_limit1:
+      charging_schedule_period.append({'startPeriod': int(start_period1), 'limit': int(period_limit1)})
+    start_period2 = form.data.get('start_period2')
+    period_limit2 = form.data.get('period_limit2')
+    if  start_period1 and period_limit1:
+      charging_schedule_period.append({'startPeriod': int(start_period2), 'limit': int(period_limit2)})
+    start_period3 = form.data.get('start_period3')
+    period_limit3 = form.data.get('period_limit3')
+    if  start_period3 and period_limit3:
+      charging_schedule_period.append({'startPeriod': int(start_period3), 'limit': int(period_limit3)})
+    start_period4 = form.data.get('start_period4')
+    period_limit4 = form.data.get('period_limit4')
+    if  start_period4 and period_limit4:
+      charging_schedule_period.append({'startPeriod': int(start_period4), 'limit': int(period_limit4)})
+
+    charging_profile = {
+      'charging_profile_id' : form.data.get('charging_profile_id'),
+      'charging_profile_level' : form.data.get('charging_profile_level'),
+      'charging_profile_purpose' : form.data.get('charging_profile_purpose'),
+      'charging_profile_kind' : form.data.get('charging_profile_kind'),
+      'charging_schedule_period' : charging_schedule_period
+    }
 
     remotestart_evcharger(cpnumber, id_tag, charging_profile)
 
     return super().form_valid(form) 
 
 class RemoStopChargeView(FormView):
-  template_name = 'clients_reset.html'
-  form_class = ClientsResetForm
+  template_name = 'clients_remostop.html'
+  form_class = RemoteStopForm
   success_url = '/clients'
 
   def form_valid(self, form):
     cpnumber = form.data.get('cpnumber')
-    remotestop_evcharger(cpnumber)
+    transaction_id = int(form.data.get('transaction_id'))
+    remotestop_evcharger(cpnumber, transaction_id)
 
     return super().form_valid(form) 
 
 class UnlockConnView(FormView):
-  template_name = 'clients_reset.html'
-  form_class = ClientsResetForm
+  template_name = 'clients_unlockconn.html'
+  form_class = ClientsUnlockConnForm
   success_url = '/clients'
 
   def form_valid(self, form):
     cpnumber = form.data.get('cpnumber')
-    connector_id = form.data.get('connector_id')
+    connector_id = int(form.data.get('connector_id'))
     unlock_connector(cpnumber, connector_id)
 
     return super().form_valid(form) 
 
 class GetConfView(FormView):
-  template_name = 'clients_reset.html'
-  form_class = ClientsResetForm
+  template_name = 'clients_getconf.html'
+  form_class = ClientsGetconfForm
   success_url = '/clients'
 
   def form_valid(self, form):
     cpnumber = form.data.get('cpnumber')
-    msg_content = form.data.get('msg_content')
-    get_conf(cpnumber, msg_content)
+    keys = form.data.get('keys')
+    if keys:
+      get_conf(cpnumber, eval(keys))
+    else:
+      get_conf(cpnumber, keys)
 
     return super().form_valid(form) 
 
 class SetConfView(FormView):
-  template_name = 'clients_reset.html'
-  form_class = ClientsResetForm
+  template_name = 'clients_setconf.html'
+  form_class = ClientsSetconfForm
   success_url = '/clients'
 
   def form_valid(self, form):
     cpnumber = form.data.get('cpnumber')
-    msg_content = form.data.get('msg_content')
-    set_conf(cpnumber, msg_content)
+    keys = form.data.get('keys')
+    set_conf(cpnumber, eval(keys))
+
+    return super().form_valid(form) 
+
+class GetLocalListVersionView(FormView):
+  template_name = 'clients_getlocallist.html'
+  form_class = ClientsGetLocalListForm
+  success_url = '/clients'
+
+  def form_valid(self, form):
+    cpnumber = form.data.get('cpnumber')
+    get_locallist(cpnumber)
+
+    return super().form_valid(form) 
+
+class SendLocalListView(FormView):
+  template_name = 'clients_sendlocallist.html'
+  form_class = ClientsSendLocalListForm
+  success_url = '/clients'
+
+  def form_valid(self, form):
+    cpnumber = form.data.get('cpnumber')
+    list_version = int(form.data.get('list_version'))
+    update_type = form.data.get('update_type')
+    local_authorization_list = form.data.get('local_authorization_list')
+    send_locallist(cpnumber, list_version, update_type, eval(local_authorization_list))
 
     return super().form_valid(form) 
 
 class ClientsResetView(FormView):
-  template_name = 'clients_reset.html'
+  template_name = 'clients_reset2.html'
   form_class = ClientsResetForm
   success_url = '/clients'
 
@@ -135,6 +196,89 @@ class ClientsResetView(FormView):
     cpnumber = form.data.get('cpnumber')
     reset_type = form.data.get('reset_type')
     reset_evcharger(cpnumber, reset_type)
+
+    return super().form_valid(form) 
+
+class UpdateFirmwareView(FormView):
+  template_name = 'clients_updatefirmware.html'
+  form_class = ClientsUpdateFirmwareForm
+  success_url = '/clients'
+
+  def form_valid(self, form):
+    cpnumber = form.data.get('cpnumber')
+    location = form.data.get('location')
+    retrieve_date = form.data.get('retrieve_date')
+
+    update_firmware(cpnumber, location, retrieve_date)
+
+    return super().form_valid(form) 
+
+class GetDiagnosticsView(FormView):
+  template_name = 'clients_getdiagnostics.html'
+  form_class = ClientsGetDiagForm
+  success_url = '/clients'
+
+  def form_valid(self, form):
+    cpnumber = form.data.get('cpnumber')
+    location = form.data.get('location')
+
+    get_diagnostics(cpnumber, location)
+
+    return super().form_valid(form) 
+
+class ReserveNowView(FormView):
+  template_name = 'clients_reservenow.html'
+  form_class = ClientsReserveNowForm
+  success_url = '/clients'
+
+  def form_valid(self, form):
+    cpnumber = form.data.get('cpnumber')
+    connector_id = int(form.data.get('connector_id'))
+    expiry_date = form.data.get('expiry_date')
+    id_tag = form.data.get('id_tag')
+    parent_id_tag = form.data.get('parent_id_tag')
+    reservation_id = int(form.data.get('reservation_id'))
+
+    reserve_now(cpnumber, connector_id, expiry_date, id_tag, parent_id_tag, reservation_id)
+
+    return super().form_valid(form) 
+
+class CancelReservationView(FormView):
+  template_name = 'clients_cancelreservation.html'
+  form_class = ClientsCancelReservationForm
+  success_url = '/clients'
+
+  def form_valid(self, form):
+    cpnumber = form.data.get('cpnumber')
+    reservation_id = int(form.data.get('reservation_id'))
+
+    cancel_reservation(cpnumber, reservation_id)
+
+    return super().form_valid(form) 
+
+class TriggerMessageView(FormView):
+  template_name = 'clients_triggermessage.html'
+  form_class = ClientsTriggerMessageForm
+  success_url = '/clients'
+
+  def form_valid(self, form):
+    cpnumber = form.data.get('cpnumber')
+    requested_message = form.data.get('requested_message')
+    trigger_message(cpnumber, requested_message)
+
+    return super().form_valid(form) 
+
+class ChangeAvailableView(FormView):
+  template_name = 'clients_changeavailable.html'
+  form_class = ClientsChangeAvailableForm
+  success_url = '/clients'
+
+  def form_valid(self, form):
+    cpnumber = form.data.get('cpnumber')
+    connector_id = int(form.data.get('connector_id'))
+    op_type = form.data.get('op_type')
+
+    change_available(cpnumber, connector_id, op_type)
 
     return super().form_valid(form) 
 
@@ -161,6 +305,21 @@ class GetCmpScheduleView(FormView):
     duration = form.data.get('duration')
 
     get_composite_schedule(cpnumber, connectorId, duration)
+
+    return super().form_valid(form) 
+
+class DataTransferView(FormView):
+  template_name = 'clients_datatransfer.html'
+  form_class = DataTransferForm
+  success_url = '/clients'
+
+  def form_valid(self, form):
+    cpnumber = form.data.get('cpnumber')
+    vendor_id = form.data.get('vendor_id')
+    message_id = form.data.get('message_id')
+    data = form.data.get('data')
+
+    data_transfer(cpnumber, vendor_id, message_id, data)
 
     return super().form_valid(form) 
 
@@ -193,7 +352,7 @@ class SetChgProfileView(FormView):
     return super().form_valid(form) 
 
 class ClearChgProfileView(FormView):
-  template_name = 'charging_profile.html'
+  template_name = 'clear_charging_profile.html'
   form_class = ClearChargingProfileForm
   success_url = '/clients'
 

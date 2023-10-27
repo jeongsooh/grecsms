@@ -147,14 +147,29 @@ def ocpp_request(ocpp_req):
           "status":"Accepted"
           }]
           return ocpp_conf
+        else:
+          if ocpp_req['msg_content']['vendorId'] == 'gresystem':
+            datatransferstatus = "Accepted"
+          else:
+            datatransferstatus = "Accepted"
+
+          ocpp_conf = [3, ocpp_req['connection_id'],
+          {
+          "status":datatransferstatus,
+          "data": ocpp_req['msg_content']
+          }]
+          return ocpp_conf
+
 
     elif ocpp_req['msg_name'] == 'DiagnosticsStatusNotification':
         logging.info('========== Got a Diagnostics Status Notification ==========')
-        return call_result.DiagnosticsStatusNotification()
+        ocpp_conf = [3, ocpp_req['connection_id'],{}]
+        return ocpp_conf
 
     elif ocpp_req['msg_name'] == 'FirmwareStatusNotification':
         logging.info('========== Got a Firmware Status Notification ==========')
-        return call_result.FirmwareStatusNotification()
+        ocpp_conf = [3, ocpp_req['connection_id'],{}]
+        return ocpp_conf
 
     elif ocpp_req['msg_name'] == 'MeterValues':
         logging.info('========== Got a MeterValue Req ==========')

@@ -59,7 +59,16 @@
             <th scope="col">설정변경</th>
             <th scope="col">충전프로파일설정</th>
             <th scope="col">충전프로파일삭제</th>
+            <th scope="col">로컬리스트확인</th>
+            <th scope="col">로컬리스트설정</th>
+            <th scope="col">펌웨어업데이트</th>
+            <th scope="col">충전기진단</th>
+            <th scope="col">충전예약</th>
+            <th scope="col">충전예약취소</th>
+            <th scope="col">원격트리거메세지</th>
+            <th scope="col">충전기사용여부변경</th>
             <th scope="col">컴포지트스케줄확인</th>
+            <th scope="col">데이터전송</th>
             <th scope="col">충전기리셋</th>
             <th scope="col">충전기삭제</th>
           </tr>
@@ -83,7 +92,25 @@
             <th><a class="btn btn-primary btn-sm btn-info" id="clients-{{ clients.id }}" 
               href="/clients/{{ clients.id }}/clearchargingprofile" target="_self">충전프로파일삭제</a></th>
             <th><a class="btn btn-primary btn-sm btn-info" id="clients-{{ clients.id }}" 
+              href="/clients/{{ clients.id }}/getlocallistversion" target="_self">로컬리스트확인</a></th>
+            <th><a class="btn btn-primary btn-sm btn-info" id="clients-{{ clients.id }}" 
+              href="/clients/{{ clients.id }}/sendlocallist" target="_self">로컬리스트설정</a></th>
+            <th><a class="btn btn-primary btn-sm btn-info" id="clients-{{ clients.id }}" 
+              href="/clients/{{ clients.id }}/updatefirmware" target="_self">업데이트펌웨어</a></th>
+            <th><a class="btn btn-primary btn-sm btn-info" id="clients-{{ clients.id }}" 
+              href="/clients/{{ clients.id }}/getdiagnostics" target="_self">충전기진단</a></th>
+            <th><a class="btn btn-primary btn-sm btn-info" id="clients-{{ clients.id }}" 
+              href="/clients/{{ clients.id }}/reservenow" target="_self">충전예약</a></th>
+            <th><a class="btn btn-primary btn-sm btn-info" id="clients-{{ clients.id }}" 
+              href="/clients/{{ clients.id }}/cancelreservation" target="_self">충전예약취소</a></th>
+            <th><a class="btn btn-primary btn-sm btn-info" id="clients-{{ clients.id }}" 
+              href="/clients/{{ clients.id }}/triggermessage" target="_self">원격트리거메세지</a></th>
+            <th><a class="btn btn-primary btn-sm btn-info" id="clients-{{ clients.id }}" 
+              href="/clients/{{ clients.id }}/changeavailable" target="_self">충전기사용여부</a></th>
+            <th><a class="btn btn-primary btn-sm btn-info" id="clients-{{ clients.id }}" 
               href="/clients/{{ clients.id }}/getcompositeschedule" target="_self">컴포지트스케줄확인</a></th>
+            <th><a class="btn btn-primary btn-sm btn-info" id="clients-{{ clients.id }}" 
+              href="/clients/{{ clients.id }}/datatransfer" target="_self">데이터전송</a></th>
             <th><a class="btn btn-primary btn-sm btn-warning" id="clients-{{ clients.id }}" 
               href="/clients/{{ clients.id }}/reset" target="_self">리셋</a></th>
             <th><a class="btn btn-primary btn-sm btn-danger" id="clients-{{ clients.id }}" 
