@@ -155,7 +155,7 @@ def ocpp_request(ocpp_req):
 
           ocpp_conf = [3, ocpp_req['connection_id'],
           {
-          "status":datatransferstatus,
+          "status":"Accepted",
           "data": ocpp_req['msg_content']
           }]
           return ocpp_conf
